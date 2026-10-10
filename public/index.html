@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mentoxy — Smarter Mental Health, Powered by AI</title>
 <meta name="description" content="Get instant mental health insights, personalized advice, and virtual care, anytime, anywhere.">
+<script>
+// Set entrance states before the first paint, with a safety release if scripting fails later.
+if (window.matchMedia && !matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+  document.documentElement.classList.add('entrance-pending');
+  window.mentoxyEntranceFallback = setTimeout(function(){
+    document.documentElement.classList.remove('entrance-pending');
+  }, 4000);
+}
+</script>
 <style>
 /* ------------------------------------------------------------------
    Fonts (embedded, latin subset) — works fully offline
@@ -150,6 +159,19 @@ img{display:block}
 .card--hrv .win-img{filter:blur(calc(var(--c) * 1.2))}
 .card--hrv .zoom{transform-origin:25% 35%}
 .chart{position:absolute;left:0;top:0;width:calc(var(--c) * 412);height:calc(var(--c) * 439.4);overflow:visible}
+.card-data{position:absolute;inset:0}
+
+/* Entrance states only. Removing the class restores the untouched design. */
+.entrance-pending .brand,
+.entrance-pending .links,
+.entrance-pending .nav-actions,
+.entrance-pending .hero p,
+.entrance-pending .btn-cta,
+.entrance-pending .card:not(.entrance-static) .c-title,
+.entrance-pending .card:not(.entrance-static) .card-data,
+.entrance-pending .card:not(.entrance-static) .c-cap{opacity:0}
+.entrance-pending .hero h1,
+.entrance-pending .card:not(.entrance-static){clip-path:inset(0 0 100% 0)}
 
 /* ========================  COMPACT LAYOUT  ========================
    Phones, small tablets and portrait screens: the composition
@@ -212,7 +234,15 @@ img{display:block}
   .cards{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);overflow:visible;margin-inline:0;padding-inline:0;gap:clamp(14px,2.2vw,24px)}
   .card{max-width:none}
 }
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important}
+  .entrance-pending .brand,.entrance-pending .links,.entrance-pending .nav-actions,
+  .entrance-pending .hero p,.entrance-pending .btn-cta,
+  .entrance-pending .card:not(.entrance-static) .c-title,
+  .entrance-pending .card:not(.entrance-static) .card-data,
+  .entrance-pending .card:not(.entrance-static) .c-cap{opacity:1!important}
+  .entrance-pending .hero h1,.entrance-pending .card:not(.entrance-static){clip-path:none!important}
+}
 </style>
 </head>
 <body>
@@ -264,6 +294,7 @@ img{display:block}
           </div>
           <div class="card-frame"></div>
           <h2 class="c-title">Sleep</h2>
+          <div class="card-data">
           <div class="bar" style="left:calc(var(--c) * 75.45);top:calc(var(--c) * 187.00)"></div>
           <span class="lbl" style="left:calc(var(--c) * 76.15);top:calc(var(--c) * 168.40)">64%</span>
           <span class="lbl" style="left:calc(var(--c) * 75.45);top:calc(var(--c) * 288.60)">S</span>
@@ -285,6 +316,7 @@ img{display:block}
           <div class="bar" style="left:calc(var(--c) * 336.70);top:calc(var(--c) * 138.10)"></div>
           <span class="lbl" style="left:calc(var(--c) * 337.40);top:calc(var(--c) * 119.50)">65%</span>
           <span class="lbl" style="left:calc(var(--c) * 336.70);top:calc(var(--c) * 288.60)">S</span>
+          </div>
           <p class="c-cap">Your HRV was within the typical range (35 - 40)</p>
         </div>
       </article>
@@ -300,11 +332,13 @@ img{display:block}
           </div>
           <div class="card-frame"></div>
           <h2 class="c-title">Biomarkers</h2>
+          <div class="card-data">
           <div class="stat"></div>
           <div class="stat-val">10.8 g/dl</div>
           <div class="pill">BOEDERLINE LOW</div>
           <div class="stat-k stat-k--l">Ferritin</div>
           <div class="stat-k stat-k--r">Blood Iron</div>
+          </div>
         </div>
       </article>
 
@@ -324,6 +358,7 @@ img{display:block}
           </div>
           <div class="card-frame"></div>
           <h2 class="c-title" style="left:calc(var(--c) * 57);top:calc(var(--c) * 59)">HRV</h2>
+          <div class="card-data">
           <svg class="chart" viewBox="0 0 412 439.4" aria-hidden="true">
           <defs><linearGradient id="hrvFill" gradientUnits="userSpaceOnUse" x1="0" y1="126.2" x2="0" y2="217.6"><stop offset="0" stop-color="#fff" stop-opacity="0.6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
           <polygon points="63.8,139.5 111.0,142.3 158.1,148.3 206.1,144.4 254.4,152.5 301.5,126.2 347.2,135.3 347.2,297.0 63.8,297.0" fill="url(#hrvFill)"/>
@@ -357,6 +392,7 @@ img{display:block}
           <span class="lbl" style="left:calc(var(--c) * 254.40);top:calc(var(--c) * 304.70)">Th</span>
           <span class="lbl" style="left:calc(var(--c) * 301.50);top:calc(var(--c) * 304.70)">F</span>
           <span class="lbl" style="left:calc(var(--c) * 347.20);top:calc(var(--c) * 304.70)">S</span>
+          </div>
           <p class="c-cap">Your HRV was within the typical range (35 - 40)</p>
         </div>
       </article>
@@ -373,6 +409,63 @@ img{display:block}
   document.addEventListener('click',function(e){if(!nav.contains(e.target))set(false);});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
   matchMedia('(min-width: 900px) and (min-aspect-ratio: 1/1)').addEventListener('change',function(){set(false);});
+})();
+</script>
+<script>
+(function(){
+  var root=document.documentElement;
+  if(!root.classList.contains('entrance-pending'))return;
+
+  var motion=matchMedia('(prefers-reduced-motion: reduce)');
+  var animations=[];
+  var finished=false;
+  var ease='cubic-bezier(.22,1,.36,1)';
+
+  function cleanup(){
+    if(finished)return;
+    finished=true;
+    clearTimeout(window.mentoxyEntranceFallback);
+    root.classList.remove('entrance-pending');
+    animations.forEach(function(animation){animation.cancel()});
+    document.querySelectorAll('.entrance-static').forEach(function(card){card.classList.remove('entrance-static')});
+    motion.removeEventListener('change',onMotionChange);
+  }
+  function onMotionChange(){if(motion.matches)cleanup()}
+  function cue(element,keyframes,at,duration){
+    if(!element || getComputedStyle(element).display==='none')return;
+    animations.push(element.animate(keyframes,{delay:at,duration:duration,easing:ease,fill:'both'}));
+  }
+  function lift(distance){
+    return [{opacity:0,transform:'translateY('+distance+'px)'},{opacity:1,transform:'none'}];
+  }
+  function visibleAtLoad(element){
+    var rect=element.getBoundingClientRect();
+    return rect.bottom>0 && rect.top<innerHeight && rect.right>0 && rect.left<innerWidth;
+  }
+
+  // A single overlapping schedule: quiet nav, headline, supporting copy, then card details.
+  cue(document.querySelector('.brand'),lift(7),0,520);
+  cue(document.querySelector('.links'),lift(6),120,500);
+  cue(document.querySelector('.nav-actions'),lift(6),210,520);
+  cue(document.querySelector('.hero h1'),
+    [{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0 0 0% 0)'}],300,860);
+  cue(document.querySelector('.hero p'),lift(10),800,560);
+  cue(document.querySelector('.btn-cta'),lift(8),1020,520);
+
+  document.querySelectorAll('.card').forEach(function(card,index){
+    if(!visibleAtLoad(card)){
+      card.classList.add('entrance-static');
+      return;
+    }
+    var offset=index*120;
+    cue(card,[{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0 0 0% 0)'}],1080+offset,850);
+    cue(card.querySelector('.c-title'),lift(7),1430+offset,490);
+    cue(card.querySelector('.card-data'),lift(7),1590+offset,650);
+    cue(card.querySelector('.c-cap'),lift(6),1890+offset,500);
+  });
+
+  motion.addEventListener('change',onMotionChange);
+  Promise.all(animations.map(function(animation){return animation.finished})).then(cleanup,cleanup);
 })();
 </script>
 </body>
